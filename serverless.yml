@@ -1,0 +1,50 @@
+service: pdf-generation-lambda
+
+plugins:
+  - serverless-lift
+  - serverless-deployment-bucket
+
+useDotenv: true
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+  stage: dev
+  region: ${env:REGION}
+  profile: ${env:AWS_PROFILE}
+  deploymentBucket:
+    name: ${env:S3_BUCKET_NAME}
+  environment:
+    HOST: ${env:HOST}
+    USER: ${env:USER}
+    PASSWORD: ${env:PASSWORD}
+    PORT: ${env:PORT}
+    DATABASE: ${env:DATABASE}
+    S3_BUCKET_NAME: ${env:S3_BUCKET_NAME}
+    AWS_PROFILE: ${env:AWS_PROFILE}
+    REGION: ${env:REGION}
+    S3_BASE_PATH_WITH_FILE_PREFIX: ${env:S3_BASE_PATH_WITH_FILE_PREFIX}
+    LAMBDA_FUNCTION_NAME: ${env:LAMBDA_FUNCTION_NAME}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action: 
+            - 's3:*'
+          Resource: 
+            - arn:aws:s3:::${env:S3_BUCKET_NAME}/*
+
+constructs:
+  pdfFunctionInvoke:
+    type: queue
+    batchSize: 1
+    worker:
+      name: ${env:LAMBDA_FUNCTION_NAME}
+      handler: index.generatePdf
+      timeout: 80
+      maximumRetryAttempts: 2
+      memorySize: 512
+      ephemeralStorageSize: 512
+      layers:
+        - arn:aws:lambda:us-west-2:347599033421:layer:wkhtmltopdf-0_12_6:1
+        - arn:aws:lambda:us-west-2:347599033421:layer:amazon_linux_fonts:1
