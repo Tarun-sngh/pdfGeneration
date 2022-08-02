@@ -190,9 +190,9 @@ module.exports.generatePdf = async (event) => {
         };
 
         if(matchPlayers["value"].length == 0){
-            throw new Error("No data for given match_key in Match_players table");
+            throw new Error("No data for given match_key: Match_players table");
         }else if(matchDetails["value"].length == 0){
-            throw new Error("No data for given match_key in List_matches table");
+            throw new Error("No data for given match_key: List_matches table");
         }
 
 		let html = generateHtml(challenge, matchPlayers.value, matchDetails.value[0], allJoinedUsers.value);
