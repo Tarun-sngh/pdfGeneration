@@ -230,6 +230,7 @@ module.exports.generatePdf = async (event) => {
 			body: JSON.stringify(return_data),
 		};
 	} catch (error) {
+        console.log(error);
         if(dbClient != null){
             if(pdfStatus == 'Preparing'){
                 console.log('Process failed so changing pdf_Created to 2');
@@ -238,7 +239,6 @@ module.exports.generatePdf = async (event) => {
             console.log('killing db connection');
             dbClient.destroy();
         }
-		console.log(error);
 		return {
 			statusCode: 200,
 			headers: headers,
