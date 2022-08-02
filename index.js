@@ -238,7 +238,6 @@ module.exports.generatePdf = async (event) => {
             console.log('killing db connection');
             dbClient.destroy();
         }
-		console.log(error);
 		return {
 			statusCode: 200,
 			headers: headers,
